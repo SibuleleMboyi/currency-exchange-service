@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.in28minutes.microservices.currencyexchangeservice.models.CurrencyExchange;
+import com.in28minutes.microservices.currencyexchangeservice.repositories.CurrencyExchangeRepository;
 
 @RestController
 public class CurrencyExchangeController {
@@ -16,8 +17,11 @@ public class CurrencyExchangeController {
     @Autowired
     private Environment environment;
 
-    @GetMapping("/currency-exchange/from/{from}/to/{to}")
-    public CurrencyExchange getCurrencyExchangeValue(@PathVariable String from, @PathVariable String to) {
+    @Autowired
+    private CurrencyExchangeRepository currencyExchangeRepository;
+
+    @GetMapping("/hard-coded-currency-exchange/from/{from}/to/{to}")
+    public CurrencyExchange getCurrencyExchangeValueHardcoded(@PathVariable String from, @PathVariable String to) {
 
         CurrencyExchange currencyExchange = new CurrencyExchange(1000L, from, to, BigDecimal.valueOf(50));
 
@@ -27,4 +31,20 @@ public class CurrencyExchangeController {
 
         return currencyExchange;
     }
+
+    @GetMapping("/jpa-currency-exchange/from/{from}/to/{to}")
+    public CurrencyExchange getCurrencyExchangeValueJpa(@PathVariable String from, @PathVariable String to) {
+
+        CurrencyExchange currencyExchange = currencyExchangeRepository.findByFromAndTo(from, to);
+
+        if (currencyExchange == null) {
+            throw new RuntimeException("Unable to find data for currency conversion " + from + " to" + to);
+        }
+        // gets the configured port of the this application
+        String port = environment.getProperty("local.server.port");
+        currencyExchange.setEnvironment(port);
+
+        return currencyExchange;
+    }
+
 }
