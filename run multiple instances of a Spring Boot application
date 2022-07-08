@@ -1,0 +1,11 @@
+
+   The follwoing commands must be executed in the project folder
+1) Application must be configured with java 11.
+
+2) Run the follwoing command to configure the environment for running the instance of the application;
+    export JAVA_HOME=/usr/lib/jvm/java-1.11.0-openjdk-amd64
+    
+3) And run the following command and configure the port number to match the port of the app you want to run;
+   env SERVER_PORT=8001 mvn spring-boot:run
+             
+	     
